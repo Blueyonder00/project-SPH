@@ -7,10 +7,16 @@ Vue.component(MyNav.name,MyNav)
 
 Vue.config.productionTip = false
 // 引入路由
-import router from '@/router/router'
+import router from '@/router/router';
+// 引入仓库
+import store from '@/store'
+// 测试接口配置
+
 
 new Vue({
   render: h => h(App),
   // 注册路由
-  router
+  router,
+  // 注册仓库，组件实例的身上会多一个$store属性
+  store,
 }).$mount('#app')
