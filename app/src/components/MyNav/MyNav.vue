@@ -1,27 +1,29 @@
 <template>
   <div class="type-nav">
     <div class="container">
-      <div @mouseleave="leaveIndex">
+      <div @mouseleave="leaveIndex" @mouseenter="entershow">
         <h2 class="all">全部商品分类</h2>
-        <div class="sort">
+        <!-- 实现在home首页中显示商品分类的一级菜单，在search中不会显示的功能，如果只写show是有不bug的 -->
+        <transition name="sort">
+          <div class="sort" v-show="$route.name == 'home' || show">
           <!-- 利用事件委派+编程式导航实现路由跳转和参数传递 -->
-          <div class="all-sort-list2" @click="goSearch">
+          <div class="all-sort-list2" @click.prevent="goSearch">
             <div class="item" v-for="(c1, index) in categoryList" :key="c1.categoryId" :class="{ cur: index == currentIndex }"
               @mouseenter="changeIndex(index)">
               <h3>
-                <a :data-categoryName="c1.categoryName" :data-category1Id="c1.categoryId">{{ c1.categoryName }}</a>
+                <a herf="" :data-categoryName="c1.categoryName" :data-category1Id="c1.categoryId">{{ c1.categoryName }}</a>
                 <!-- <router-link to="/search">{{ c1.categoryName }}</router-link> -->
               </h3>
               <div class="item-list clearfix" v-show="currentIndex==index">
                 <div class="subitem" v-for="c2 in c1.categoryChild" :key="c2.categoryId">
                   <dl class="fore">
                     <dt>
-                      <a :data-categoryName="c2.categoryName" :data-category1Id="c2.categoryId">{{ c2.categoryName }}</a>
+                      <a herf="" :data-categoryName="c2.categoryName" :data-category1Id="c2.categoryId">{{ c2.categoryName }}</a>
                       <!-- <router-link to="/search">{{ c2.categoryName }}</router-link> -->
                     </dt>
                     <dd>
                       <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
-                        <a :data-categoryName="c3.categoryName" :data-category3Id="c3.categoryId">{{ c3.categoryName }}</a>
+                        <a herf="" :data-categoryName="c3.categoryName" :data-category3Id="c3.categoryId">{{ c3.categoryName }}</a>
                         <!-- <router-link to="/search">{{ c3.categoryName }}</router-link> -->
                       </em>
                     </dd>
@@ -31,7 +33,9 @@
             </div>
 
           </div>
-        </div>
+          </div>
+        </transition>
+        
       </div>
 
       <nav class="nav">
@@ -56,11 +60,10 @@ export default {
   data() {
     return {
       currentIndex: -1,
+      show: false,
     }
   },
-  mounted() {
-    this.$store.dispatch('categoryList');
-  },
+
   computed: {
     ...mapState(
       // 右侧需要一个函数，当使用这个计算属性的时候，右侧函数会立即执行一次
@@ -80,16 +83,13 @@ export default {
     changeIndex:throttle(function(index) {
         this.currentIndex = index;
       },10),
-    leaveIndex() {
-      this.currentIndex = -1;
-    },
+   
     // 最好的解决方案是编程式导航+事件委派
     // 事件委派如何确定点击的是哪个标签，如何获取参数【1.2.3级导航？】
     // 给每个a添加自定义属性，首先选出来a标签，再选择1，2，3导航
     goSearch(e) {
       let element = e.target;
       let {categoryname,category1id,category2id,category3id} = element.dataset;
-      console.log(categoryname)
       if (categoryname) { 
         // 整理路由跳转的参数
         let location = {name:'search',query:{categoryName:categoryname}};
@@ -106,7 +106,21 @@ export default {
 
 
 
-    }
+    },
+    leaveIndex() {
+      this.currentIndex = -1;
+      if (this.$route.name != 'home') {
+        this.show = false;
+      }
+      
+    },
+    entershow() {
+      if (this.$route.name != 'home') {
+        this.show = true;
+        
+      }
+      
+    },
   }
 }
 </script>
@@ -158,15 +172,18 @@ export default {
         overflow: hidden;
 
         .item {
+        
           h3 {
+            cursor: pointer;
             line-height: 31px;
             font-size: 14px;
             font-weight: 400;
             overflow: hidden;
             padding: 0 20px;
             margin: 0;
-
+         
             a {
+              
               color: #333;
             }
           }
@@ -198,6 +215,7 @@ export default {
                 }
 
                 dt {
+                  cursor: pointer;
                   float: left;
                   width: 54px;
                   line-height: 22px;
@@ -213,6 +231,7 @@ export default {
                   overflow: hidden;
 
                   em {
+                    cursor: pointer;
                     float: left;
                     height: 14px;
                     line-height: 14px;
@@ -239,6 +258,18 @@ export default {
           background-color: skyblue;
         }
       }
+    }
+    .sort-enter {
+      opacity: 0;
+
+    }
+    .sort-enter-to {
+      opacity: 1;
+
+    }
+    .sort-enter-active {
+      transition: all 0.18s linear;
+
     }
   }
 }</style>

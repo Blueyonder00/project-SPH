@@ -1,13 +1,15 @@
 <template>
-    <div>我是搜索
-        <div>{{$route.params.keyword}}---{{ $route.query.k }}</div>
+    <div>
+        <MyNav />
     </div>
     
 </template>
 
 <script>
+import MyNav from '@/components/MyNav/MyNav.vue';
 export default {
-    name:'MySearch'
+    name: "MySearch",
+    components: { MyNav }
 }
 </script>
 

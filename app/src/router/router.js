@@ -35,6 +35,7 @@ export default new VueRouter({
     routes: [
         {
             path:'/home',
+            name:'home',
             component:MyHome,
             meta:{
                 show:true

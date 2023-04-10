@@ -20,6 +20,9 @@ export default {
   components: {
     MyHeader,MyFooter
   },
+  mounted() {
+    this.$store.dispatch('categoryList');
+  },
 }
 </script>
 
